@@ -1,0 +1,31 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - name: Android SDK Setup
+    init: |
+      echo "Configurando ambiente Android..."
+      export ANDROID_HOME=/home/gitpod/android-sdk
+      export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+      mkdir -p $ANDROID_HOME
+      cd $ANDROID_HOME
+      wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+      unzip -q commandlinetools-linux-*.zip
+      mkdir -p cmdline-tools/latest
+      mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
+      rm -rf commandlinetools-linux-*.zip
+      yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+      $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" "ndk;25.2.9519653"
+    command: |
+      echo "Ambiente pronto! Para compilar: ./gradlew assembleDebug"
+
+  - name: Download Core Library
+    command: |
+      mkdir -p V2rayNG/app/libs
+      cd V2rayNG/app/libs
+      wget -q https://github.com/2dust/AndroidLibXrayLite/releases/latest/download/libv2ray.aar
+
+vscode:
+  extensions:
+    - redhat.java
+    - mathiasfrohlich.Kotlin
