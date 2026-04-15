@@ -1,0 +1,27 @@
+image: gitpod/workspace-full:latest
+
+tasks:
+  - name: Configurar Android SDK
+    init: |
+      echo "Configurando o ambiente Android..."
+      # Instalar Java e ferramentas essenciais
+      sudo apt-get update
+      sudo apt-get install -y openjdk-17-jdk wget unzip
+      # Configurar Android SDK
+      export ANDROID_HOME=/workspace/android-sdk
+      export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+      mkdir -p $ANDROID_HOME
+      cd $ANDROID_HOME
+      wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+      unzip -q commandlinetools-linux-*.zip
+      mkdir -p cmdline-tools/latest
+      mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
+      rm -rf commandlinetools-linux-*.zip
+      yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+      $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+    command: |
+      echo "Ambiente pronto! Para compilar o APK, execute: cd V2rayNG && ./gradlew assembleDebug"
+
+ports:
+  - port: 6080
+    onOpen: open-browser
